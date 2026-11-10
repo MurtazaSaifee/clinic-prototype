@@ -11,7 +11,7 @@ One ticket per commit, built in order. Each ticket points back to the spec ([../
 | 05 | [Nurse intake, doctor visit, checkout](05-intake-visit-checkout.md) | F5, F6, F7 | 15m | 04 | Done |
 | 06 | [Study screening](06-study-screening.md) | F8 | 15m | 02 | Done |
 | 07 | [Study outreach and consent](07-study-outreach.md) | F9 | 12m | 06 | Done |
-| 08 | [Results inbox](08-results-inbox.md) | F10 | 8m | 02 | Todo |
+| 08 | [Results inbox](08-results-inbox.md) | F10 | 8m | 02 | Done |
 | 09 | [README](09-readme.md) | | 5m | all | Todo |
 
 Cut order if time runs short: 08, then paging on lists other than patients, then cancel and no-show.

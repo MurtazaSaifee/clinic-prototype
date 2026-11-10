@@ -87,3 +87,7 @@ textarea { font: inherit; width: 100%; box-sizing: border-box; padding: var(--sp
 .phone { display: inline-block; margin: var(--space-1) 0; font-size: var(--font-size-lg); font-weight: 600; color: var(--color-text); text-decoration: none; }
 .log-call { margin-top: var(--space-3); }
 .log-call .actions { flex-wrap: wrap; margin-top: var(--space-2); align-items: center; }
+
+tr.abnormal td:first-child { box-shadow: inset var(--accent-border-width) 0 0 var(--color-error); }
+.flag { margin-left: var(--space-2); font-size: var(--font-size-sm); font-weight: 600; color: var(--color-error); }
+.app-header nav .count { display: inline-block; min-width: 1.4em; padding: 0 var(--space-1); border-radius: var(--radius); background: var(--color-accent); color: var(--color-on-accent); font-size: var(--font-size-sm); text-align: center; }

@@ -29,3 +29,13 @@ test('the chosen staff member is sent as X-Staff-Id on the next request', async 
   await waitFor(() => expect(headersOf(fetchMock, '/api/patients')).toBeDefined());
   expect(headersOf(fetchMock, '/api/patients')?.['X-Staff-Id']).toBe('2');
 });
+
+test('the nav shows how many results still need review', async () => {
+  mockFetch({
+    '/api/staff': { body: staff },
+    '/api/test-results': { body: { data: [], page: 1, page_size: 1, total: 8 } },
+    '/api/appointments': { body: [] },
+  });
+  render(<App />);
+  expect(await screen.findByRole('link', { name: 'Results 8' })).toBeInTheDocument();
+});
