@@ -9,7 +9,7 @@
     "erasableSyntaxOnly": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
-  "include": ["src", "db", "knexfile.ts"]
+  "include": ["src", "db", "test", "knexfile.ts"]
 }
