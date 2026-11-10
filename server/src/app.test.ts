@@ -13,7 +13,7 @@ test('GET /api/health reports the database is reachable', async () => {
 test('GET /api/patients returns seeded patients sorted by last name', async () => {
   const res = await request(app).get('/api/patients');
   expect(res.status).toBe(200);
-  expect(res.body).toHaveLength(50);
+  expect(res.body).toHaveLength(120);
   const lastNames = res.body.map((p: { last_name: string }) => p.last_name);
   expect(lastNames).toEqual([...lastNames].sort((a, b) => a.localeCompare(b)));
   expect(res.body[0].date_of_birth).toMatch(/^\d{4}-\d{2}-\d{2}$/);
