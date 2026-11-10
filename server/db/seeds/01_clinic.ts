@@ -3,8 +3,9 @@ import { faker } from '@faker-js/faker';
 import { SEXES } from '../../src/enums.ts';
 import type { AppointmentStatus, CandidateStatus, ContactOutcome } from '../../src/enums.ts';
 
-// Every date hangs off this one, so the data is identical whatever day the seed runs.
-const TODAY = '2026-11-10';
+// Every date hangs off the day the seed runs (UTC), so the data is identical relative to
+// today and the Today board is never empty, whenever the app is set up.
+const TODAY = new Date().toISOString().slice(0, 10);
 
 // Times are written in UTC so the seed doesn't depend on the machine's time zone.
 const at = (date: string, time: string) => `${date}T${time}:00Z`;
@@ -192,7 +193,8 @@ export async function seed(knex: Knex) {
 
   const diagnosedOn = (dateOfBirth: string) => {
     const adult = addYears(dateOfBirth, 18);
-    const from = adult > '2012-01-01' ? adult : '2012-01-01';
+    const earliest = addYears(TODAY, -15);
+    const from = adult > earliest ? adult : earliest;
     return faker.date.between({ from, to: TODAY }).toISOString().slice(0, 10);
   };
   const diagnosisRows = patients.flatMap((p) => {

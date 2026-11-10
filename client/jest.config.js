@@ -1,3 +1,6 @@
+// Run in a non-UTC zone so a time shown in the viewer's zone instead of clinic time (UTC) fails a test.
+process.env.TZ = 'America/New_York';
+
 export default {
   testEnvironment: 'jsdom',
   transform: {

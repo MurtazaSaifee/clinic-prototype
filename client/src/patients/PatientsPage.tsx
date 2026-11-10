@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { api } from '../shared/api.ts';
 import { Pager } from '../shared/Pager.tsx';
 import type { Paged } from '../shared/types.ts';
+import { useDebounced } from '../shared/useDebounced.ts';
 import { PatientForm } from './PatientForm.tsx';
 import type { Patient } from './types.ts';
 
@@ -9,21 +10,14 @@ const PAGE_SIZE = 25;
 
 export function PatientsPage() {
   const [search, setSearch] = useState('');
-  const [q, setQ] = useState('');
+  const q = useDebounced(search.trim());
   const [page, setPage] = useState(1);
   const [result, setResult] = useState<Paged<Patient> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<Patient | 'new' | null>(null);
   const [reload, setReload] = useState(0);
 
-  // Wait for a pause in typing so each keystroke doesn't send a request.
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setQ(search.trim());
-      setPage(1);
-    }, 250);
-    return () => clearTimeout(timer);
-  }, [search]);
+  useEffect(() => setPage(1), [q]);
 
   useEffect(() => {
     let current = true;
@@ -73,26 +67,28 @@ export function PatientsPage() {
       />
       {error && <p className="error">{error}</p>}
 
-      <table>
-        <thead>
-          <tr><th>Name</th><th>Date of birth</th><th>Phone</th><th></th></tr>
-        </thead>
-        <tbody>
-          {result?.data.map((p) => (
-            <tr key={p.id}>
-              <td>{p.last_name}, {p.first_name}</td>
-              <td>{p.date_of_birth}</td>
-              <td>{p.phone}</td>
-              <td className="row-actions">
-                <button onClick={() => setEditing(p)} aria-label={`Edit ${p.first_name} ${p.last_name}`}>Edit</button>
-              </td>
-            </tr>
-          ))}
-          {result?.data.length === 0 && (
-            <tr><td colSpan={4} className="empty">No patients match "{q}".</td></tr>
-          )}
-        </tbody>
-      </table>
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Date of birth</th><th>Phone</th><th></th></tr>
+          </thead>
+          <tbody>
+            {result?.data.map((p) => (
+              <tr key={p.id}>
+                <td>{p.last_name}, {p.first_name}</td>
+                <td>{p.date_of_birth}</td>
+                <td>{p.phone}</td>
+                <td className="row-actions">
+                  <button onClick={() => setEditing(p)} aria-label={`Edit ${p.first_name} ${p.last_name}`}>Edit</button>
+                </td>
+              </tr>
+            ))}
+            {result?.data.length === 0 && (
+              <tr><td colSpan={4} className="empty">No patients match "{q}".</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
       {result && <Pager page={result.page} pageSize={result.page_size} total={result.total} onPage={setPage} />}
     </>
   );
