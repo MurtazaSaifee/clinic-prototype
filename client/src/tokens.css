@@ -1,0 +1,25 @@
+/* Design tokens. Restyle the app by changing these; styles.css only refers to them. */
+:root {
+  --font-family: system-ui, sans-serif;
+  --font-size-sm: 0.85rem;
+  --font-size-md: 0.9rem;
+  --font-size-lg: 1.1rem;
+
+  --color-text: #1f2933;
+  --color-text-muted: #52606d;
+  --color-background: #f7f8fa;
+  --color-surface: #fff;
+  --color-border: #e4e7eb;
+  --color-accent: #2563eb;
+  --color-error: #b42318;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+
+  --border-width: 1px;
+  --accent-border-width: 2px;
+  --content-width: 1100px;
+}

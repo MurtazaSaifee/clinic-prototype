@@ -1,7 +1,24 @@
-:root { font-family: system-ui, sans-serif; color: #1f2933; background: #f7f8fa; }
+:root { font-family: var(--font-family); color: var(--color-text); background: var(--color-background); }
 body { margin: 0; }
-main { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
-table { width: 100%; border-collapse: collapse; background: #fff; }
-th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #e4e7eb; }
-th { font-size: 0.85rem; color: #52606d; }
-.error { color: #b42318; }
+main { max-width: var(--content-width); margin: 0 auto; padding: var(--space-5) var(--space-4); }
+table { width: 100%; border-collapse: collapse; background: var(--color-surface); }
+th, td { text-align: left; padding: var(--space-2) var(--space-3); border-bottom: var(--border-width) solid var(--color-border); }
+th { font-size: var(--font-size-sm); color: var(--color-text-muted); }
+.error { color: var(--color-error); }
+
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+.app-header nav { display: flex; gap: var(--space-4); flex: 1; }
+.app-header nav a { color: var(--color-text-muted); text-decoration: none; padding: var(--space-1) 0; }
+.app-header nav a[aria-current="page"] { color: var(--color-text); border-bottom: var(--accent-border-width) solid var(--color-accent); }
+.clinic-name { font-size: var(--font-size-lg); }
+.staff-picker { font-size: var(--font-size-md); color: var(--color-text-muted); }
+
+.pager { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-3); }
