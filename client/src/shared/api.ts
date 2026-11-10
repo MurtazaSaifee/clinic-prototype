@@ -28,6 +28,18 @@ export function setStaffId(id: number | null) {
   }
 }
 
+// Carries the server's per-field messages from a 400 so forms can show them.
+export class ApiError extends Error {
+  status: number;
+  details: Record<string, string[]>;
+
+  constructor(status: number, message: string, details: Record<string, string[]> = {}) {
+    super(message);
+    this.status = status;
+    this.details = details;
+  }
+}
+
 export async function api<T>(path: string, options: Options = {}): Promise<T> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (staffId !== null) headers['X-Staff-Id'] = String(staffId);
@@ -36,6 +48,9 @@ export async function api<T>(path: string, options: Options = {}): Promise<T> {
     headers,
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
   });
-  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.statusText);
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new ApiError(res.status, body.error || res.statusText, body.details);
+  }
   return res.json();
 }

@@ -2,11 +2,9 @@ import { db, paginate } from './db.ts';
 
 afterAll(() => db.destroy());
 
+// Uses staff, which no test writes to, so the totals hold while other files run in parallel.
 test('paginate returns one page plus the total', async () => {
-  const query = db('patients').select('id').orderBy('id');
-  const result = await paginate<{ id: number }>(query, 2, 25);
-  expect(result.total).toBe(120);
-  expect(result.page).toBe(2);
-  expect(result.page_size).toBe(25);
-  expect(result.data.map((p) => p.id)).toEqual(Array.from({ length: 25 }, (_, i) => i + 26));
+  const query = db('staff').select('id').orderBy('id');
+  const result = await paginate<{ id: number }>(query, 2, 2);
+  expect(result).toEqual({ data: [{ id: 3 }, { id: 4 }], page: 2, page_size: 2, total: 5 });
 });

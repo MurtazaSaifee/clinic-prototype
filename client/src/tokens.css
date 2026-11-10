@@ -11,6 +11,7 @@
   --color-surface: #fff;
   --color-border: #e4e7eb;
   --color-accent: #2563eb;
+  --color-on-accent: #fff;
   --color-error: #b42318;
 
   --space-1: 4px;
@@ -20,6 +21,7 @@
   --space-5: 24px;
 
   --border-width: 1px;
+  --radius: 4px;
   --accent-border-width: 2px;
   --content-width: 1100px;
 }

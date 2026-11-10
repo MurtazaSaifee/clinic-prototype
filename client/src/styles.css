@@ -22,3 +22,22 @@ th { font-size: var(--font-size-sm); color: var(--color-text-muted); }
 .staff-picker { font-size: var(--font-size-md); color: var(--color-text-muted); }
 
 .pager { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-3); }
+
+button { font: inherit; padding: var(--space-1) var(--space-3); border: var(--border-width) solid var(--color-border); border-radius: var(--radius); background: var(--color-surface); color: var(--color-text); cursor: pointer; }
+button:disabled { opacity: 0.5; cursor: default; }
+button.primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-on-accent); }
+input, select { font: inherit; padding: var(--space-1) var(--space-2); border: var(--border-width) solid var(--color-border); border-radius: var(--radius); background: var(--color-surface); color: var(--color-text); }
+input[aria-invalid], select[aria-invalid] { border-color: var(--color-error); }
+
+.page-title { display: flex; align-items: center; justify-content: space-between; }
+.search { width: 100%; max-width: 360px; margin-bottom: var(--space-3); box-sizing: border-box; }
+.row-actions { text-align: right; }
+.empty { color: var(--color-text-muted); }
+
+.panel { background: var(--color-surface); border: var(--border-width) solid var(--color-border); border-radius: var(--radius); padding: var(--space-4); margin-bottom: var(--space-4); }
+.panel h3 { margin-top: 0; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-3) var(--space-4); }
+.field { display: flex; flex-direction: column; gap: var(--space-1); }
+.field label { font-size: var(--font-size-sm); color: var(--color-text-muted); }
+.field-error { margin: 0; font-size: var(--font-size-sm); color: var(--color-error); }
+.actions { display: flex; gap: var(--space-2); margin-top: var(--space-4); }

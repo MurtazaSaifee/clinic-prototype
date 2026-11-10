@@ -6,4 +6,6 @@ export type Patient = {
   last_name: string;
   date_of_birth: string;
   sex: Sex;
+  phone: string;
+  email: string | null;
 };

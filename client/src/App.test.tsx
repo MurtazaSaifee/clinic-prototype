@@ -9,7 +9,7 @@ const staff = [
 ];
 
 function headersOf(fetchMock: ReturnType<typeof mockFetch>, url: string) {
-  const call = fetchMock.mock.calls.filter(([u]) => u === url).at(-1);
+  const call = fetchMock.mock.calls.filter(([u]) => u.split('?')[0] === url).at(-1);
   return call?.[1].headers as Record<string, string> | undefined;
 }
 
@@ -19,7 +19,7 @@ beforeEach(() => {
 });
 
 test('the chosen staff member is sent as X-Staff-Id on the next request', async () => {
-  const fetchMock = mockFetch({ '/api/staff': { body: staff }, '/api/patients': { body: [] } });
+  const fetchMock = mockFetch({ '/api/staff': { body: staff }, '/api/patients': { body: { data: [], page: 1, page_size: 25, total: 0 } } });
   render(<App />);
   await screen.findByRole('option', { name: 'Sam Lee (Nurse)' });
   fireEvent.change(screen.getByLabelText('Signed in as'), { target: { value: '2' } });
