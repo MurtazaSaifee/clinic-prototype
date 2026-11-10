@@ -26,9 +26,10 @@ async function expectedMatchIds(): Promise<number[]> {
   return rows.map((r) => r.id).sort((a, b) => a - b);
 }
 
+// toContainEqual, not toEqual: outreach.test.ts adds a study of its own while this file runs.
 test('GET /api/studies lists GLUCO-STEP with its parsed criteria', async () => {
   const res = await request(app).get('/api/studies');
-  expect(res.body).toEqual([
+  expect(res.body).toContainEqual(
     {
       id: 1,
       name: 'GLUCO-STEP',
@@ -38,7 +39,7 @@ test('GET /api/studies lists GLUCO-STEP with its parsed criteria', async () => {
         { type: 'DIAGNOSIS', icd10_prefixes: ['E11'], label: 'Type 2 diabetes' },
       ],
     },
-  ]);
+  );
 });
 
 describe('GET /api/studies/:id/matches', () => {

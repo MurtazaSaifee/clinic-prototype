@@ -3,12 +3,20 @@ export const CLINIC_TIME_ZONE = 'UTC';
 
 const timeFormat = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: CLINIC_TIME_ZONE });
 
+const dateTimeFormat = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: CLINIC_TIME_ZONE,
+});
+
 export function todayIso() {
   return new Date().toISOString().slice(0, 10);
 }
 
 export function formatTime(iso: string) {
   return timeFormat.format(new Date(iso));
+}
+
+export function formatDateTime(iso: string) {
+  return dateTimeFormat.format(new Date(iso));
 }
 
 // Whole years between two YYYY-MM-DD dates; a birthday on `today` counts.

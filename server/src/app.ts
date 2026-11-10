@@ -4,7 +4,7 @@ import { appointmentRoutes, checkoutTaskRoutes } from './appointments/routes.ts'
 import { healthRoutes } from './health/routes.ts';
 import { patientRoutes } from './patients/routes.ts';
 import { staffRoutes } from './staff/routes.ts';
-import { studyRoutes } from './studies/routes.ts';
+import { candidateRoutes, studyRoutes } from './studies/routes.ts';
 
 export const app = express();
 app.use(express.json());
@@ -15,6 +15,7 @@ app.use('/api/patients', patientRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/checkout-tasks', checkoutTaskRoutes);
 app.use('/api/studies', studyRoutes);
+app.use('/api/candidates', candidateRoutes);
 
 // Express 5 forwards rejected promises here, so routes don't need try/catch.
 app.use(errorHandler);

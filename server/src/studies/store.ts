@@ -1,5 +1,6 @@
-import { db } from '../db.ts';
-import type { CandidateStatus } from '../enums.ts';
+import { db, paginate } from '../db.ts';
+import { CANDIDATE_STATUSES } from '../enums.ts';
+import type { CandidateStatus, ContactOutcome } from '../enums.ts';
 import { criteriaSchema } from './criteria.ts';
 import type { Criterion, CriterionResult, DiagnosisFact } from './criteria.ts';
 
@@ -76,4 +77,115 @@ export async function createCandidate(input: NewCandidate) {
     if ((err as { code?: string }).code === '23505') return null;
     throw err;
   }
+}
+
+export type CallListRow = {
+  id: number;
+  status: CandidateStatus;
+  patient: { id: number; name: string; phone: string };
+  match_reasons: CriterionResult[];
+  attempt_count: number;
+  last_attempt: { outcome: ContactOutcome; attempted_at: string; staff_name: string } | null;
+};
+
+type CallListDbRow = {
+  id: number;
+  status: CandidateStatus;
+  match_reasons: CriterionResult[];
+  patient_id: number;
+  patient_name: string;
+  patient_phone: string;
+  attempt_count: number;
+  last_outcome: ContactOutcome | null;
+  last_attempted_at: Date | null;
+  last_staff_name: string | null;
+};
+
+function callListQuery() {
+  return db('study_candidates as c')
+    .join('patients as p', 'p.id', 'c.patient_id')
+    .joinRaw(
+      `LEFT JOIN LATERAL (
+         SELECT a.outcome, a.attempted_at, s.name AS staff_name
+         FROM contact_attempts a JOIN staff s ON s.id = a.staff_id
+         WHERE a.candidate_id = c.id
+         ORDER BY a.attempted_at DESC, a.id DESC
+         LIMIT 1
+       ) last ON true`,
+    )
+    .select(
+      'c.id',
+      'c.status',
+      'c.match_reasons',
+      'p.id as patient_id',
+      db.raw(`p.first_name || ' ' || p.last_name as patient_name`),
+      'p.phone as patient_phone',
+      db.raw('(SELECT count(*)::int FROM contact_attempts a WHERE a.candidate_id = c.id) as attempt_count'),
+      'last.outcome as last_outcome',
+      'last.attempted_at as last_attempted_at',
+      'last.staff_name as last_staff_name',
+    );
+}
+
+function toCallListRow(row: CallListDbRow): CallListRow {
+  return {
+    id: row.id,
+    status: row.status,
+    patient: { id: row.patient_id, name: row.patient_name, phone: row.patient_phone },
+    match_reasons: row.match_reasons,
+    attempt_count: row.attempt_count,
+    last_attempt:
+      row.last_outcome === null
+        ? null
+        : { outcome: row.last_outcome, attempted_at: row.last_attempted_at!.toISOString(), staff_name: row.last_staff_name! },
+  };
+}
+
+// Never-called candidates first, then whoever has waited longest since their last call.
+export async function listCandidates(studyId: number, status: CandidateStatus, page: number, pageSize: number) {
+  const query = callListQuery()
+    .where({ 'c.study_id': studyId, 'c.status': status })
+    .orderByRaw('last.attempted_at ASC NULLS FIRST, c.id');
+  const result = await paginate<CallListDbRow>(query, page, pageSize);
+  return { ...result, data: result.data.map(toCallListRow) };
+}
+
+export async function countCandidatesByStatus(studyId: number): Promise<Record<CandidateStatus, number>> {
+  const rows: { status: CandidateStatus; total: string }[] = await db('study_candidates')
+    .select('status')
+    .count({ total: '*' })
+    .where({ study_id: studyId })
+    .groupBy('status');
+  const counts = Object.fromEntries(CANDIDATE_STATUSES.map((s) => [s, 0])) as Record<CandidateStatus, number>;
+  for (const row of rows) counts[row.status] = Number(row.total);
+  return counts;
+}
+
+export async function findCallListRow(id: number): Promise<CallListRow | undefined> {
+  const row = await callListQuery().where('c.id', id).first();
+  return row && toCallListRow(row);
+}
+
+// Records the call and, in the same transaction, moves the candidate on if the call reached them.
+// Returns false (and records nothing) if the candidate had already left PENDING_CONTACT.
+export async function logContactAttempt(
+  candidateId: number,
+  attempt: { staff_id: number; outcome: ContactOutcome; notes: string | null },
+  nextStatus: CandidateStatus,
+) {
+  return db.transaction(async (trx) => {
+    const updated = await trx('study_candidates')
+      .where({ id: candidateId, status: 'PENDING_CONTACT' })
+      .update({ status: nextStatus, updated_at: trx.fn.now() });
+    if (updated === 0) return false;
+    await trx('contact_attempts').insert({ ...attempt, candidate_id: candidateId });
+    return true;
+  });
+}
+
+export async function recordConsent(candidateId: number, status: CandidateStatus) {
+  const updated = await db('study_candidates')
+    .where({ id: candidateId, status: 'PENDING_CONSENT' })
+    .update({ status, updated_at: db.fn.now() });
+  return updated === 1;
 }

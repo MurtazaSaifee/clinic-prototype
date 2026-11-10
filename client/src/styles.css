@@ -47,7 +47,7 @@ input[aria-invalid], select[aria-invalid] { border-color: var(--color-error); }
 .row-actions button { margin: 0 0 var(--space-1) var(--space-1); }
 .table-wrap { overflow-x: auto; }
 
-.tabs { display: flex; gap: var(--space-1); margin-bottom: var(--space-3); }
+.tabs { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-bottom: var(--space-3); }
 .tabs [role="tab"][aria-selected="true"] { background: var(--color-text); border-color: var(--color-text); color: var(--color-surface); }
 
 .status { display: inline-block; padding: 0 var(--space-2); border-radius: var(--radius); font-size: var(--font-size-sm); background: var(--color-background); white-space: nowrap; }
@@ -83,3 +83,7 @@ textarea { font: inherit; width: 100%; box-sizing: border-box; padding: var(--sp
 .reasons { margin: var(--space-3) 0 0; }
 .met { color: var(--color-success); font-weight: bold; }
 .not-met { color: var(--color-error); font-weight: bold; }
+
+.phone { display: inline-block; margin: var(--space-1) 0; font-size: var(--font-size-lg); font-weight: 600; color: var(--color-text); text-decoration: none; }
+.log-call { margin-top: var(--space-3); }
+.log-call .actions { flex-wrap: wrap; margin-top: var(--space-2); align-items: center; }
