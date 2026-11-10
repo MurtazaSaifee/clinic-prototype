@@ -3,6 +3,7 @@ import { PatientsPage } from './patients/PatientsPage.tsx';
 import { api, getStaffId, setStaffId } from './shared/api.ts';
 import { StaffPicker } from './staff/StaffPicker.tsx';
 import type { Staff } from './staff/types.ts';
+import { StudiesPage } from './studies/StudiesPage.tsx';
 import { TodayPage } from './today/TodayPage.tsx';
 
 const PAGES = { today: 'Today', patients: 'Patients', results: 'Results', studies: 'Studies' };
@@ -51,7 +52,8 @@ export default function App() {
       <main>
         {page === 'today' && <TodayPage currentStaff={currentStaff} physicians={physicians} />}
         {page === 'patients' && <PatientsPage />}
-        {(page === 'results' || page === 'studies') && <h2>{PAGES[page]}</h2>}
+        {page === 'studies' && <StudiesPage currentStaff={currentStaff} />}
+        {page === 'results' && <h2>{PAGES[page]}</h2>}
       </main>
     </>
   );

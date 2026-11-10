@@ -10,3 +10,9 @@ export function todayIso() {
 export function formatTime(iso: string) {
   return timeFormat.format(new Date(iso));
 }
+
+// Whole years between two YYYY-MM-DD dates; a birthday on `today` counts.
+export function ageOn(dateOfBirth: string, today: string) {
+  const years = Number(today.slice(0, 4)) - Number(dateOfBirth.slice(0, 4));
+  return today.slice(5) < dateOfBirth.slice(5) ? years - 1 : years;
+}

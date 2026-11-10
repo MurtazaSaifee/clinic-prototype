@@ -1,6 +1,7 @@
 import type { Knex } from 'knex';
 import { faker } from '@faker-js/faker';
 import { SEXES } from '../../src/enums.ts';
+import { criteriaSchema, evaluate } from '../../src/studies/criteria.ts';
 import type { AppointmentStatus, CandidateStatus, ContactOutcome } from '../../src/enums.ts';
 
 // Every date hangs off the day the seed runs (UTC), so the data is identical relative to
@@ -20,11 +21,6 @@ function addYears(date: string, years: number) {
   const d = new Date(`${date}T00:00:00Z`);
   d.setUTCFullYear(d.getUTCFullYear() + years);
   return d.toISOString().slice(0, 10);
-}
-
-function ageOn(dateOfBirth: string, date: string) {
-  const years = Number(date.slice(0, 4)) - Number(dateOfBirth.slice(0, 4));
-  return date.slice(5) < dateOfBirth.slice(5) ? years - 1 : years;
 }
 
 const COMMON_DIAGNOSES = [
@@ -71,10 +67,11 @@ const DOCTOR_NOTES = [
   'Ordered labs to rule out anything systemic.',
 ];
 
-const GLUCO_STEP_CRITERIA = [
+// Parsed with the same schema the API uses, so the seed can't store criteria the matcher rejects.
+const GLUCO_STEP_CRITERIA = criteriaSchema.parse([
   { type: 'AGE_BETWEEN', min: 18, max: 75 },
   { type: 'DIAGNOSIS', icd10_prefixes: ['E11'], label: 'Type 2 diabetes' },
-];
+]);
 
 // Type 2 patients aged 18 to 75 match the study. The other two diabetic groups miss by one criterion each.
 type Profile = 'TYPE_2' | 'TYPE_2_OVER_75' | 'TYPE_1' | 'OTHER';
@@ -297,22 +294,15 @@ export async function seed(knex: Knex) {
   for (const [i, [status, calls]] of CANDIDATES.entries()) {
     const patient = studyMatches[i];
     const reviewedOn = addDays(TODAY, -20 + i);
-    const diagnosis = diagnosisRows.find((d) => d.patient_id === patient.id && d.icd10_code.startsWith('E11'))!;
     const attempts = calls.map(([outcome, notes], j) => ({
       staff_id: j === 0 && i % 3 === 0 ? nurse : receptionist,
       attempted_at: at(addDays(reviewedOn, 1 + j * 2), '10:15'),
       outcome,
       notes: notes ?? null,
     }));
-    // Mirrors what the matcher will report, so the call list shows the same evidence the reviewer saw.
-    const matchReasons = [
-      { criterion: GLUCO_STEP_CRITERIA[0], met: true, evidence: `Age ${ageOn(patient.date_of_birth, reviewedOn)} (18 to 75 required)` },
-      {
-        criterion: GLUCO_STEP_CRITERIA[1],
-        met: true,
-        evidence: `${diagnosis.icd10_code} ${diagnosis.description}, diagnosed ${diagnosis.diagnosed_on}`,
-      },
-    ];
+    // The real matcher, run on the day of review: the evidence the reviewer saw then.
+    const patientDiagnoses = diagnosisRows.filter((d) => d.patient_id === patient.id);
+    const matchReasons = evaluate(GLUCO_STEP_CRITERIA, patient, patientDiagnoses, reviewedOn);
     const [candidate] = await knex('study_candidates')
       .insert({
         patient_id: patient.id,

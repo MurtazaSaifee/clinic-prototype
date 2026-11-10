@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { SEXES } from '../enums.ts';
 import { HttpError, pageQuery, parse } from '../http.ts';
+import { todayIso } from '../today.ts';
 import { createPatient, findPatient, searchPatients, updatePatient } from './store.ts';
 
 const required = (field: string) => z.string(`${field} is required`).trim().min(1, `${field} is required`);
@@ -11,7 +12,7 @@ const patientInput = z.object({
   last_name: required('Last name'),
   date_of_birth: required('Date of birth')
     .pipe(z.iso.date('Enter a valid date'))
-    .refine((date) => date <= new Date().toISOString().slice(0, 10), 'Date of birth cannot be in the future'),
+    .refine((date) => date <= todayIso(), 'Date of birth cannot be in the future'),
   sex: z.enum(SEXES, 'Choose female or male'),
   phone: z
     .string('Phone is required')

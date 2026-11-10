@@ -77,3 +77,9 @@ textarea { font: inherit; width: 100%; box-sizing: border-box; padding: var(--sp
 .plain-list li { padding: var(--space-1) 0; }
 .add-task { display: flex; gap: var(--space-2); margin-top: var(--space-2); }
 .add-task input { flex: 1; }
+
+.subhead { margin: var(--space-4) 0 var(--space-1); color: var(--color-text-muted); }
+.match h3 { margin: 0; }
+.reasons { margin: var(--space-3) 0 0; }
+.met { color: var(--color-success); font-weight: bold; }
+.not-met { color: var(--color-error); font-weight: bold; }

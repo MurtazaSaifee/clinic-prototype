@@ -4,6 +4,7 @@ import { APPOINTMENT_STATUSES } from '../enums.ts';
 import { HttpError, parse, requireStaff } from '../http.ts';
 import { findPatient } from '../patients/store.ts';
 import { findStaff } from '../staff/store.ts';
+import { todayIso } from '../today.ts';
 import { canMove } from './status.ts';
 import {
   addCheckoutTask,
@@ -18,7 +19,7 @@ import {
 } from './store.ts';
 
 const dateQuery = z.object({
-  date: z.iso.date('Enter a date as YYYY-MM-DD').default(() => new Date().toISOString().slice(0, 10)),
+  date: z.iso.date('Enter a date as YYYY-MM-DD').default(todayIso),
 });
 
 const newAppointment = z.object({
