@@ -6,6 +6,7 @@ import { formatTime, todayIso } from '../shared/time.ts';
 import type { Staff } from '../staff/types.ts';
 import { BookVisitForm } from './BookVisitForm.tsx';
 import type { BoardVisit } from './types.ts';
+import { VisitPanel } from './VisitPanel.tsx';
 
 const TABS = {
   reception: { label: 'Reception', statuses: ['SCHEDULED', 'READY_FOR_CHECKOUT'] },
@@ -35,6 +36,7 @@ export function TodayPage({ currentStaff, physicians }: Props) {
   const [visits, setVisits] = useState<BoardVisit[]>([]);
   const [tab, setTab] = useState<Tab>('all');
   const [booking, setBooking] = useState(false);
+  const [openVisitId, setOpenVisitId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [reload, setReload] = useState(0);
 
@@ -73,6 +75,10 @@ export function TodayPage({ currentStaff, physicians }: Props) {
   }
 
   const shown = visits.filter((v) => inTab(tab, v));
+  // Any physician can see any patient (small clinic); the doctor tab just puts your own first.
+  if (tab === 'doctor' && currentStaff) {
+    shown.sort((a, b) => Number(b.physician.id === currentStaff.id) - Number(a.physician.id === currentStaff.id));
+  }
 
   return (
     <>
@@ -88,6 +94,16 @@ export function TodayPage({ currentStaff, physicians }: Props) {
         <BookVisitForm physicians={physicians} date={date} onBooked={booked} onCancel={() => setBooking(false)} />
       )}
 
+      {openVisitId !== null && (
+        <VisitPanel
+          key={openVisitId}
+          visitId={openVisitId}
+          currentStaff={currentStaff}
+          onChanged={() => setReload((n) => n + 1)}
+          onClose={() => setOpenVisitId(null)}
+        />
+      )}
+
       <div className="tabs" role="tablist">
         {(Object.keys(TABS) as Tab[]).map((key) => (
           <button key={key} role="tab" aria-selected={key === tab} onClick={() => setTab(key)}>
@@ -100,16 +116,20 @@ export function TodayPage({ currentStaff, physicians }: Props) {
       <div className="table-wrap">
         <table>
           <thead>
-            <tr><th>Time</th><th>Patient</th><th>Physician</th><th>Reason</th><th>Status</th><th></th></tr>
+            <tr><th>Time</th><th>Patient</th><th>Physician</th><th>Reason</th><th>Status</th><th>Tasks</th><th></th></tr>
           </thead>
           <tbody>
             {shown.map((v) => (
               <tr key={v.id}>
                 <td>{formatTime(v.scheduled_at)}</td>
-                <td>{v.patient.name}<div className="muted">{v.patient.phone}</div></td>
+                <td>
+                  <button className="link" onClick={() => setOpenVisitId(v.id)}>{v.patient.name}</button>
+                  <div className="muted">{v.patient.phone}</div>
+                </td>
                 <td>{v.physician.name}</td>
                 <td>{v.reason}</td>
                 <td><span className={`status status-${v.status.toLowerCase()}`}>{labels[v.status]}</span></td>
+                <td>{v.open_task_count > 0 ? `${v.open_task_count} open` : ''}</td>
                 <td className="row-actions">
                   {v.status === 'SCHEDULED' &&
                     SCHEDULED_ACTIONS.map((a) => (
@@ -121,7 +141,7 @@ export function TodayPage({ currentStaff, physicians }: Props) {
               </tr>
             ))}
             {shown.length === 0 && (
-              <tr><td colSpan={6} className="empty">No visits here for {date}.</td></tr>
+              <tr><td colSpan={7} className="empty">No visits here for {date}.</td></tr>
             )}
           </tbody>
         </table>

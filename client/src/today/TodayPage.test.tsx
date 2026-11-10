@@ -91,3 +91,27 @@ test('booking sends the chosen slot and shows a double-booking 409 in the form',
     reason: 'Follow-up',
   });
 });
+
+test('the Doctor tab lists the signed-in physician’s own patients first', async () => {
+  const waiting = (id: number, time: string, physician: { id: number; name: string }, name: string) => ({
+    ...scheduled,
+    id,
+    scheduled_at: `2026-11-10T${time}:00.000Z`,
+    status: 'READY_FOR_DOCTOR',
+    physician,
+    patient: { ...scheduled.patient, id, name },
+  });
+  mockFetch({
+    '/api/appointments': {
+      body: [
+        waiting(1, '09:00', { id: 1, name: 'Amara Okafor' }, 'First Patient'),
+        waiting(2, '09:30', { id: 2, name: 'Daniel Reyes' }, 'Second Patient'),
+      ],
+    },
+  });
+  const reyes: Staff = { id: 2, name: 'Daniel Reyes', role: 'PHYSICIAN' };
+  render(<TodayPage currentStaff={reyes} physicians={physicians} />);
+  await screen.findByText('Second Patient');
+  const names = screen.getAllByRole('button', { name: /Patient$/ }).map((b) => b.textContent);
+  expect(names).toEqual(['Second Patient', 'First Patient']);
+});

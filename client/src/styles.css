@@ -59,3 +59,21 @@ input[aria-invalid], select[aria-invalid] { border-color: var(--color-error); }
 .picker-results { list-style: none; margin: var(--space-1) 0 0; padding: 0; border: var(--border-width) solid var(--color-border); border-radius: var(--radius); background: var(--color-surface); }
 .picker-results button { width: 100%; text-align: left; border: 0; border-radius: 0; }
 .picked { display: flex; gap: var(--space-2); align-items: center; justify-content: space-between; }
+
+button.link { border: 0; padding: 0; background: none; color: var(--color-accent); text-align: left; text-decoration: underline; }
+textarea { font: inherit; width: 100%; box-sizing: border-box; padding: var(--space-2); border: var(--border-width) solid var(--color-border); border-radius: var(--radius); }
+
+.visit-panel section { margin-top: var(--space-4); }
+.visit-panel h4 { margin: 0 0 var(--space-2); font-size: var(--font-size-md); color: var(--color-text-muted); }
+.panel-head { display: flex; align-items: flex-start; gap: var(--space-3); }
+.panel-head > div { flex: 1; }
+.panel-head h3, .panel-head p { margin: 0; }
+.reason { font-size: var(--font-size-lg); margin: var(--space-3) 0; }
+.notes { white-space: pre-wrap; margin: 0; }
+.vitals { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-3); margin: 0; }
+.vitals dt { font-size: var(--font-size-sm); color: var(--color-text-muted); }
+.vitals dd { margin: 0; font-size: var(--font-size-lg); }
+.plain-list { list-style: none; margin: 0; padding: 0; }
+.plain-list li { padding: var(--space-1) 0; }
+.add-task { display: flex; gap: var(--space-2); margin-top: var(--space-2); }
+.add-task input { flex: 1; }

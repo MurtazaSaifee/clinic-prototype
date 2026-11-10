@@ -2,7 +2,8 @@ import { useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import { PatientPicker } from '../patients/PatientPicker.tsx';
 import type { Patient } from '../patients/types.ts';
-import { api, ApiError } from '../shared/api.ts';
+import { api } from '../shared/api.ts';
+import { describeError, Field } from '../shared/forms.tsx';
 import type { Staff } from '../staff/types.ts';
 import type { BoardVisit } from './types.ts';
 
@@ -39,23 +40,17 @@ export function BookVisitForm({ physicians, date: initialDate, onBooked, onCance
       });
       onBooked(visit);
     } catch (err) {
-      const details = err instanceof ApiError ? err.details : {};
-      setErrors(details);
-      setFormError(Object.keys(details).length ? 'Check the highlighted fields.' : (err as Error).message);
+      const { fields, message } = describeError(err);
+      setErrors(fields);
+      setFormError(message);
     } finally {
       setSaving(false);
     }
   }
 
-  function field(name: string, label: string, htmlFor: string, input: ReactNode) {
-    return (
-      <div className="field">
-        <label htmlFor={htmlFor}>{label}</label>
-        {input}
-        {errors[name]?.map((message) => <p key={message} className="field-error">{message}</p>)}
-      </div>
-    );
-  }
+  const field = (name: string, label: string, htmlFor: string, input: ReactNode) => (
+    <Field label={label} htmlFor={htmlFor} errors={errors[name]}>{input}</Field>
+  );
 
   const invalid = (name: string) => (errors[name] ? true : undefined);
 

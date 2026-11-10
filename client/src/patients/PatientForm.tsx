@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
-import { api, ApiError } from '../shared/api.ts';
+import { api } from '../shared/api.ts';
+import { describeError, Field } from '../shared/forms.tsx';
 import { labels } from '../shared/labels.ts';
 import type { Patient } from './types.ts';
 
@@ -26,23 +27,17 @@ export function PatientForm({ patient, onSaved, onCancel }: Props) {
         : await api<Patient>('/patients', { method: 'POST', body });
       onSaved(saved);
     } catch (err) {
-      const details = err instanceof ApiError ? err.details : {};
-      setErrors(details);
-      setFormError(Object.keys(details).length ? 'Check the highlighted fields.' : (err as Error).message);
+      const { fields, message } = describeError(err);
+      setErrors(fields);
+      setFormError(message);
     } finally {
       setSaving(false);
     }
   }
 
-  function field(name: keyof Fields, label: string, input: ReactNode) {
-    return (
-      <div className="field">
-        <label htmlFor={name}>{label}</label>
-        {input}
-        {errors[name]?.map((message) => <p key={message} className="field-error">{message}</p>)}
-      </div>
-    );
-  }
+  const field = (name: keyof Fields, label: string, input: ReactNode) => (
+    <Field label={label} htmlFor={name} errors={errors[name]}>{input}</Field>
+  );
 
   const text = (name: keyof Fields, type = 'text') => (
     <input
