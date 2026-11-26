@@ -1,6 +1,6 @@
 # 05 Nurse intake, doctor visit, checkout
 
-Spec: flows F5, F6, F7. Estimate: 15m.
+Spec: flows F5, F6, F7.
 
 ## Goal
 Each handoff carries what the next person needs: reason and nurse notes reach the doctor; checkout tasks reach reception.

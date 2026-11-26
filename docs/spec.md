@@ -1,6 +1,6 @@
 # Clinic prototype: spec
 
-Status: approved, 2026-11-10. Built inside a two-hour timebox.
+Status: approved, 2026-11-10.
 
 ## 1. Goal
 
@@ -47,7 +47,7 @@ There is no login. A "Signed in as" picker in the header chooses the acting staf
 | F9 | Study outreach and consent | 8, 9 |
 | F10 | Doctor's results inbox | 4 |
 
-### Deferred (noted, not planned for this timebox)
+### Deferred (future scope)
 
 - S1. Doctor adds a diagnosis during a visit, and the patient then appears in study matches.
 - S2. Patient detail page with diagnoses, visits, results and study status together.

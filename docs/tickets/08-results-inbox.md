@@ -1,6 +1,6 @@
 # 08 Results inbox
 
-Spec: flow F10. Estimate: 8m. First to cut if time runs short.
+Spec: flow F10.
 
 ## Goal
 The doctor never loses track of a result they haven't looked at.

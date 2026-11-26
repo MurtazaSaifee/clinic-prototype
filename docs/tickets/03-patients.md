@@ -1,6 +1,6 @@
 # 03 Patients: lookup, register, edit
 
-Spec: flows F1, F2. Estimate: 15m.
+Spec: flows F1, F2.
 
 ## Goal
 Reception finds any patient and their phone number in seconds, registers new patients, and fixes details.

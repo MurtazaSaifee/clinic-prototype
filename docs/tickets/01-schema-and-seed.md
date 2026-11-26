@@ -1,6 +1,6 @@
 # 01 Schema and seed
 
-Spec: sections 6, 7, 8, 11. Estimate: 12m.
+Spec: sections 6, 7, 8, 11.
 
 ## Goal
 Every table from the data model exists, and `npm run db:reset` fills it with synthetic data that makes every queue and list non-empty on first open.

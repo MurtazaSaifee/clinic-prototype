@@ -1,6 +1,26 @@
 # Clinic prototype
 
+[![CI](https://github.com/MurtazaSaifee/clinic-prototype/actions/workflows/ci.yml/badge.svg)](https://github.com/MurtazaSaifee/clinic-prototype/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A working prototype for a small clinic. It helps staff move a patient through a visit (reception, nurse, doctor, checkout), keeps the doctor's test results from getting lost, and finds patients who may qualify for a clinical study, then tracks the calls and consent. All patient data is synthetic.
+
+![Today board showing reception check-in and checkout queues](docs/screenshots/today-board.png)
+
+## Engineering highlights
+
+- **Server-enforced clinical handoffs & double-booking guards:** Visit transitions (`SCHEDULED` → `CHECKED_IN` → `READY_FOR_DOCTOR` → `READY_FOR_CHECKOUT` → `CHECKED_OUT`) are validated by an explicit state machine (`canMove`), checkout is refused (`409`) while any doctor checkout task remains open, and a PostgreSQL partial unique index prevents physician slot double-booking.
+- **Evidence-linked study screening:** A pure, Zod-validated criteria evaluator screens patients against study rules (age bounds, ICD-10 diagnosis prefixes) and persists the exact criterion-by-criterion evidence strings alongside eligibility decisions.
+- **Single source of truth for enums & contracts:** Domain enums in `server/src/enums.ts` drive PostgreSQL schema checks, Zod request validation, and React display labels, backed by 140 server integration/unit tests and 31 React Testing Library tests.
+
+<details>
+<summary>More screenshots: doctor visit panel and clinical study screening</summary>
+
+![Doctor visit panel with reason, nurse vitals and notes, diagnoses, and checkout tasks](docs/screenshots/doctor-visit.png)
+
+![Clinical study screening with criterion-by-criterion diagnostic evidence](docs/screenshots/study-screening.png)
+
+</details>
 
 ## Run it
 
@@ -32,7 +52,7 @@ Both cover the client and the server. Server tests run against a separate `clini
 
 ## What I built
 
-I asked the clinic owner a few questions first. The spec in [docs/spec.md](docs/spec.md) lists their answers and maps each screen back to them. The work was split into the tickets in [docs/tickets/](docs/tickets/), one commit each.
+I asked the clinic owner a few questions first. The spec in [docs/spec.md](docs/spec.md) lists their answers and maps each screen back to them. The implementation milestones are documented in [docs/tickets/](docs/tickets/).
 
 **Receptionist**
 - Patients page: search by name ("Smith" or "Smith, Jo") or by any part of the phone number, paged. Register and edit patients with one form. (Owner: reception is slow to find a phone number.)
@@ -53,7 +73,7 @@ Every status change is checked on the server, both the allowed moves and two peo
 
 ## What I left out, and why
 
-The timebox was two hours, so I kept to the ten flows the owner's answers called for.
+The prototype focuses strictly on the ten core clinic workflows:
 
 - **Real login and role permissions.** The staff picker stands in for login. A role check on an id you choose yourself wouldn't protect anything, so any staff member can do any action.
 - **Deleting patients, rescheduling, rooms, multiple locations, SMS or email.** The owner didn't ask for these.

@@ -1,9 +1,7 @@
 # 09 README
 
-Estimate: 5m.
-
 ## Goal
-A screener can run the prototype in one go and understand what was built and what wasn't.
+A reviewer can run the prototype in one go and understand its scope and architecture.
 
 ## Contents
 - Requirements (Node 26, Postgres running locally) and setup: `npm install`, `npm run db:reset`, `npm run dev`. Test and typecheck commands.

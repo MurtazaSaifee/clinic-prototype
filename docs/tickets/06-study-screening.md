@@ -1,6 +1,6 @@
 # 06 Study screening
 
-Spec: flow F8, section 8. Estimate: 15m.
+Spec: flow F8, section 8.
 
 ## Goal
 Staff see possible matches for the study, with the evidence for every criterion, and record their decision.

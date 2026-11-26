@@ -1,6 +1,6 @@
 # 04 Today board, booking, check-in
 
-Spec: flows F3, F4, section 7. Estimate: 15m.
+Spec: flows F3, F4, section 7.
 
 ## Goal
 Reception sees the day at a glance, books visits without double-booking, and checks patients in.

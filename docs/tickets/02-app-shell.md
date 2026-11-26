@@ -1,9 +1,9 @@
 # 02 App shell and API client
 
-Spec: sections 3, 9 (conventions), 10. Estimate: 6m.
+Spec: sections 3, 9 (conventions), 10.
 
 ## Goal
-The shared pieces every later ticket uses: navigation, the "Signed in as" picker, the API client, and server helpers.
+The shared pieces every feature builds on: navigation, the "Signed in as" picker, the API client, and server helpers.
 
 ## Tasks
 - Server:

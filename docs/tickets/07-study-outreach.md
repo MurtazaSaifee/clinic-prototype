@@ -1,6 +1,6 @@
 # 07 Study outreach and consent
 
-Spec: flow F9. Estimate: 12m.
+Spec: flow F9.
 
 ## Goal
 Reception knows who still needs a call and who has been reached, and everyone can see consent status.
